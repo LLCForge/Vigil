@@ -1,0 +1,144 @@
+# Vigil example configuration.
+# All addresses and ASNs are documentation values (RFC 5737, RFC 3849, RFC 5398);
+# replace them with your own. Secrets are never stored here, only the names of the
+# environment variables that hold them.
+
+# State directory (alert queue, silences, incident timeline). Platform default when
+# unset: $STATE_DIRECTORY, ~/.local/state/vigil, ~/Library/Application Support/vigil,
+# %ProgramData%\LLCForge\vigil.
+# data_dir = "/var/lib/vigil"
+
+[log]
+format = "text"          # "json" for one JSON object per line on stderr
+level = "info"
+
+[feeds]
+# RIPE RIS Live WebSocket endpoint (default shown).
+ris_live = true
+ris_live_url = "wss://ris-live.ripe.net/v1/ws/?client=llcforge-vigil"
+# Raise a feed_down alert when a feed has been unreachable this long.
+feed_down_grace_secs = 120
+
+# RouteViews BMP stream over Kafka (OpenBMP raw BMP). Topics are
+# routeviews.<collector>.<peer-asn>.bmp_raw; list them with `vigil kafka-topics`.
+# [feeds.routeviews_kafka]
+# brokers = ["stream.routeviews.org:9092"]
+# topics = ["routeviews.amsix.*.bmp_raw", "routeviews.linx.*.bmp_raw"]
+# max_topics = 200
+# topic_refresh_secs = 600
+
+# MRT update files (RouteViews, RIS) found through the BGPKIT broker; minutes of delay.
+# [feeds.bgpkit]
+# collectors = ["route-views2", "rrc00"]
+# poll_secs = 300
+# allowed_hosts = ["routeviews.org", "ripe.net"]
+
+[detection]
+# Sightings of the same (prefix, origin) are grouped for this long before alerting.
+aggregation_window_secs = 10
+# After an alert fires, the same alert stays quiet for this long.
+dedup_secs = 3600
+# A fired alert is resolved once its route has been gone this long.
+resolve_after_secs = 600
+# Known DDoS scrubbing providers originating your prefixes: "warn" (default,
+# scrubbing_origin warning instead of a critical hijack), "allow" or "off".
+scrubbing = "warn"
+# scrubbing_asns = [64520]   # replaces the built-in list (see README)
+
+[[prefix]]
+prefix = "198.51.100.0/24"
+origins = [64500]
+max_length = 24          # anything more specific is a sub-prefix hijack
+upstreams = [64496, 64497]   # anything else next to the origin is reported
+group = "core"           # alert resource becomes "core/198.51.100.0/24"
+
+[[prefix]]
+prefix = "2001:db8:100::/48"
+origins = [64500, 64501]
+
+[[prefix]]
+prefix = "203.0.113.0/24"
+origins = [64502]
+
+# Registered but intentionally unannounced space: any announcement is squatting.
+[[prefix]]
+prefix = "192.0.2.0/24"
+dormant = true
+
+# Watch everything an AS originates (RIPEstat announced-prefixes, refreshed).
+# [[asn]]
+# asn = 64500
+# extra_origins = [64501]
+# group = "core"
+
+# Time-boxed exception, e.g. a DDoS scrubbing provider announcing on your behalf.
+# `prefix` is optional; without it the exception covers every watched prefix.
+[[exception]]
+origin = 64505
+prefix = "203.0.113.0/24"
+until = "2030-01-01T00:00:00Z"
+
+[ripestat]
+base_url = "https://stat.ripe.net"
+timeout_ms = 10000
+asn_refresh_secs = 3600
+
+# Optional RPKI enrichment through Notary. The alert is never delayed past the timeout.
+# [enrich.notary]
+# url = "http://127.0.0.1:8323"
+# timeout_ms = 1500
+
+# AS holder names and countries in alerts (local CSV first, then RIPEstat, cached).
+# [enrich.asnames]
+# ripestat = true
+# file = "/etc/vigil/asnames.csv"    # asn,name,country
+# timeout_ms = 1500
+
+# Visibility: share of RIS full-feed peers seeing each watched prefix.
+[visibility]
+enabled = false
+poll_secs = 900
+min_ratio = 0.5
+
+# Verify Event Horizon blackholes are visible outside.
+# [event_horizon]
+# url = "http://127.0.0.1:8080"
+# token_env = "EVENT_HORIZON_TOKEN"
+# poll_secs = 60
+# grace_secs = 300
+
+# Optional bearer token for /v1/visibility and /v1/incidents.
+# [api]
+# token_env = "VIGIL_API_TOKEN"
+
+# Alert outputs (llcforge-alert). Without any [[alerts.sink]], alerts go to stdout.
+[alerts]
+dedup_window_secs = 300
+
+[[alerts.sink]]
+type = "stdout"
+format = "text"
+
+# [[alerts.sink]]
+# type = "telegram"
+# bot_token_env = "VIGIL_TELEGRAM_TOKEN"
+# chat_id = -1001234567890
+# resources = ["core/*"]            # only the "core" prefix group
+
+# [[alerts.sink]]
+# type = "webhook"
+# url = "https://hooks.example.net/vigil"
+# hmac_secret_env = "VIGIL_WEBHOOK_SECRET"
+
+# [[alerts.sink]]
+# type = "syslog"
+# transport = "udp"
+# address = "127.0.0.1:514"
+
+[silences]
+# api_token_env = "VIGIL_ADMIN_TOKEN"
+
+# Management listener: /metrics, /healthz, /readyz, /v1/visibility, /v1/incidents.
+[health]
+listen = "127.0.0.1:9184"
+# admin_token_env = "VIGIL_ADMIN_TOKEN"   # mounts POST /v1/reload

@@ -1,0 +1,115 @@
+# Prometheus alerting rules for Vigil (generic llcforge-alert metrics).
+# Load with `rule_files: ["vigil-rules.yml"]` or as a PrometheusRule `spec`.
+# Assumes the scrape job is named "vigil"; adjust the `job` matcher if not.
+groups:
+  - name: vigil.availability
+    rules:
+      - alert: VigilDown
+        expr: up{job="vigil"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Vigil is down on {{ $labels.instance }}"
+          description: "The Vigil metrics endpoint has not been scrapeable for 5 minutes."
+
+      - alert: VigilAbsent
+        expr: absent(up{job="vigil"})
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No Vigil targets are being scraped"
+
+  - name: vigil.alert-delivery
+    rules:
+      - alert: VigilAlertDeliveryFailing
+        expr: increase(llcforge_alert_sink_failed_total{tool="vigil"}[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil cannot deliver alerts to sink {{ $labels.sink }} ({{ $labels.type }})"
+          description: "{{ $value | humanize }} delivery failures in 15 minutes. Undelivered alerts stay queued and are retried."
+
+      - alert: VigilAlertsDropped
+        expr: increase(llcforge_alert_dropped_total{tool="vigil"}[15m]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "Vigil dropped alerts on {{ $labels.instance }}"
+          description: "Alerts were dropped (intake channel full, queue bound reached or delivery expired)."
+
+      - alert: VigilAlertQueueBacklog
+        expr: llcforge_alert_queue_depth{tool="vigil"} > 100
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil alert queue backlog: {{ $value }} pending"
+          description: "Alerts are accumulating faster than sinks accept them, or a sink has been down for 15 minutes."
+
+      - alert: VigilSinkBacklog
+        expr: llcforge_alert_sink_queued{tool="vigil"} > 50
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil sink {{ $labels.sink }} has {{ $value }} undelivered alerts"
+
+  - name: vigil.detection
+    rules:
+      - alert: VigilRisLiveDisconnected
+        expr: vigil_ris_connected{job="vigil"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil has no RIS Live session on {{ $labels.instance }}"
+          description: "Hijack detection over RIS Live is blind until the session is back."
+
+      - alert: VigilRisLagHigh
+        expr: vigil_ris_lag_seconds{job="vigil"} > 120
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RIS Live messages arrive {{ $value | humanize }}s late"
+
+      - alert: VigilFeedMalformed
+        expr: rate(vigil_ris_malformed_total{job="vigil"}[15m]) + rate(vigil_kafka_malformed_total{job="vigil"}[15m]) > 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil drops more than one malformed feed message per second"
+
+      - alert: VigilKafkaNoPartitions
+        expr: vigil_kafka_partitions{job="vigil"} == 0 and on(instance) vigil_kafka_messages_total{job="vigil"} > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil consumes no Kafka partition any more"
+
+      - alert: VigilMrtFailures
+        expr: increase(vigil_mrt_failures_total{job="vigil"}[1h]) > 3
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil failed to download or parse {{ $value }} MRT files in an hour"
+
+      - alert: VigilPrefixVisibilityLow
+        expr: vigil_visibility_ratio{job="vigil"} < 0.5
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.prefix }} is seen by {{ $value | humanizePercentage }} of RIS peers"
+
+      - alert: VigilSightingsDropped
+        expr: increase(vigil_sightings_dropped_total{job="vigil"}[1h]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vigil state tables are full; sightings were dropped"

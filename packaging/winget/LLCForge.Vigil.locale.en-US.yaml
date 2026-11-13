@@ -1,0 +1,18 @@
+# winget default-locale manifest for Vigil. @VERSION@ is filled in by the release workflow.
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+PackageIdentifier: LLCForge.Vigil
+PackageVersion: "@VERSION@"
+PackageLocale: en-US
+Publisher: LLCForge
+PublisherUrl: https://github.com/LLCForge
+PackageName: Vigil
+PackageUrl: https://github.com/LLCForge/Vigil
+License: MIT
+LicenseUrl: https://github.com/LLCForge/Vigil/blob/main/LICENSE
+ShortDescription: Real-time BGP origin hijack detection over public route collector feeds
+Tags:
+  - networking
+  - monitoring
+  - llcforge
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

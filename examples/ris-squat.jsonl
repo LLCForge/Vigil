@@ -1,0 +1,2 @@
+{"type":"ris_message","data":{"timestamp":1794556800.40,"peer":"192.0.2.9","peer_asn":"64499","id":"squat-01","host":"rrc25","type":"UPDATE","path":[64499,64503],"origin":"IGP","announcements":[{"next_hop":"192.0.2.9","prefixes":["192.0.2.0/24"]}],"withdrawals":[]}}
+{"type":"ris_message","data":{"timestamp":1794556803.75,"peer":"192.0.2.1","peer_asn":"64496","id":"squat-03","host":"rrc00","type":"UPDATE","path":[64496,64499,64503],"origin":"IGP","announcements":[{"next_hop":"192.0.2.1","prefixes":["192.0.2.0/24"]}],"withdrawals":[]}}

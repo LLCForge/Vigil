@@ -1,0 +1,33 @@
+{
+    "##": "Scoop manifest for Vigil. @VERSION@ and @SHA256_*@ are filled in by the release workflow; checkver/autoupdate keep it current afterwards.",
+    "version": "@VERSION@",
+    "description": "Real-time BGP origin hijack detection over public route collector feeds",
+    "homepage": "https://github.com/LLCForge/Vigil",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/LLCForge/Vigil/releases/download/v@VERSION@/vigil-@VERSION@-x86_64-pc-windows-msvc.zip",
+            "hash": "@SHA256_X86_64_WINDOWS@"
+        },
+        "arm64": {
+            "url": "https://github.com/LLCForge/Vigil/releases/download/v@VERSION@/vigil-@VERSION@-aarch64-pc-windows-msvc.zip",
+            "hash": "@SHA256_AARCH64_WINDOWS@"
+        }
+    },
+    "bin": "vigil.exe",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/LLCForge/Vigil/releases/download/v$version/vigil-$version-x86_64-pc-windows-msvc.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/LLCForge/Vigil/releases/download/v$version/vigil-$version-aarch64-pc-windows-msvc.zip"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS",
+            "regex": "$sha256\\s+$basename"
+        }
+    }
+}

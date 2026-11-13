@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Vigil launchd daemon for macOS.
+  Install:
+    sudo mkdir -p /usr/local/etc/vigil /usr/local/var/lib/vigil /usr/local/var/log
+    sudo cp vigil.example.toml /usr/local/etc/vigil/vigil.toml
+    sudo chown -R nobody:nobody /usr/local/var/lib/vigil
+    sudo touch /usr/local/var/log/vigil.log && sudo chown nobody /usr/local/var/log/vigil.log
+    sudo cp net.llcforge.vigil.plist /Library/LaunchDaemons/
+    sudo launchctl bootstrap system /Library/LaunchDaemons/net.llcforge.vigil.plist
+  Reload config: sudo launchctl kill HUP system/net.llcforge.vigil
+  Secrets: add them under EnvironmentVariables below and keep this file
+  mode 0600 root:wheel, or source them from a wrapper script.
+  On Apple silicon with Homebrew, the binary lives in /opt/homebrew/bin.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>net.llcforge.vigil</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/vigil</string>
+    <string>run</string>
+    <string>--config</string>
+    <string>/usr/local/etc/vigil/vigil.toml</string>
+  </array>
+  <key>UserName</key>
+  <string>nobody</string>
+  <key>GroupName</key>
+  <string>nobody</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>STATE_DIRECTORY</key>
+    <string>/usr/local/var/lib/vigil</string>
+  </dict>
+  <key>WorkingDirectory</key>
+  <string>/usr/local/var/lib/vigil</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>Umask</key>
+  <integer>63</integer>
+  <key>StandardOutPath</key>
+  <string>/usr/local/var/log/vigil.log</string>
+  <key>StandardErrorPath</key>
+  <string>/usr/local/var/log/vigil.log</string>
+</dict>
+</plist>

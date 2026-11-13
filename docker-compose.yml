@@ -1,0 +1,23 @@
+# Example: docker compose up -d
+# Put secrets (bot tokens, routing keys, ...) in ./vigil.env (KEY=value lines,
+# never committed) and reference them from the TOML via *_env settings.
+services:
+  vigil:
+    image: ghcr.io/llcforge/vigil:latest
+    # build: .
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    env_file:
+      - path: ./vigil.env
+        required: false
+    volumes:
+      - ./vigil.toml:/etc/vigil/vigil.toml:ro
+      - vigil-data:/data
+    ports:
+      # Metrics + /healthz + /readyz. Bind to loopback; expose deliberately.
+      - "127.0.0.1:9184:9184"
+
+volumes:
+  vigil-data:

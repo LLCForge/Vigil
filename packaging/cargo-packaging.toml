@@ -1,0 +1,38 @@
+# Cargo.toml fragment for Vigil packaging. Paste both tables at the end of
+# the tool's Cargo.toml (sync.py does not edit Cargo.toml). The release
+# workflow runs `cargo deb --no-build --target <triple>` and
+# `cargo generate-rpm --target <triple>`; both rewrite target/release/ to
+# target/<triple>/release/ automatically.
+
+[package.metadata.deb]
+# Replace with the project's packaging contact before the first release.
+maintainer = "LLCForge contributors <https://github.com/LLCForge>"
+copyright = "2026, LLCForge contributors"
+license-file = ["LICENSE", "0"]
+extended-description = "Real-time BGP origin hijack detection over public route collector feeds"
+section = "net"
+priority = "optional"
+depends = "$auto"
+assets = [
+    ["target/release/vigil", "usr/bin/", "755"],
+    ["vigil.example.toml", "etc/vigil/vigil.toml", "644"],
+    ["README.md", "usr/share/doc/vigil/README.md", "644"],
+    ["NOTICE", "usr/share/doc/vigil/NOTICE", "644"],
+]
+conf-files = ["/etc/vigil/vigil.toml"]
+# Installs packaging/systemd/vigil.service and the matching maintainer scripts;
+# the unit is not enabled automatically (configure first, then enable).
+systemd-units = { unit-name = "vigil", unit-scripts = "packaging/systemd", enable = false, start = false }
+
+[package.metadata.generate-rpm]
+license = "MIT"
+summary = "Real-time BGP origin hijack detection over public route collector feeds"
+assets = [
+    { source = "target/release/vigil", dest = "/usr/bin/vigil", mode = "755" },
+    { source = "packaging/systemd/vigil.service", dest = "/usr/lib/systemd/system/vigil.service", mode = "644" },
+    { source = "vigil.example.toml", dest = "/etc/vigil/vigil.toml", mode = "644", config = "noreplace" },
+    { source = "README.md", dest = "/usr/share/doc/vigil/README.md", mode = "644", doc = true },
+    { source = "LICENSE", dest = "/usr/share/licenses/vigil/LICENSE", mode = "644", doc = true },
+]
+post_install_script = "systemctl daemon-reload >/dev/null 2>&1 || :"
+post_uninstall_script = "systemctl daemon-reload >/dev/null 2>&1 || :"

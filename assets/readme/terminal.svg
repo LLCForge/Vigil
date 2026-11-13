@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" width="760" height="420" role="img" aria-label="Vigil">
+<rect width="760" height="420" rx="14" fill="#0E1013"/>
+<rect x="0.5" y="0.5" width="759" height="419" rx="14" fill="none" stroke="#2A2F36"/>
+<circle cx="24" cy="22" r="6" fill="#FF5F57"/><circle cx="44" cy="22" r="6" fill="#FEBC2E"/><circle cx="64" cy="22" r="6" fill="#28C840"/>
+<text x="380.0" y="27" text-anchor="middle" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#7C838D">Vigil</text>
+<line x1="0" y1="42" x2="760" y2="42" stroke="#22262C"/>
+<g font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, Menlo, monospace" font-size="14" fill="#C9CDD3">
+<text x="24" y="66" xml:space="preserve"><tspan fill="#0EA5E9">$</tspan> <tspan fill="#F4F5F7" font-weight="700">vigil --config vigil.example.toml replay examples/ris-sample.jsonl</tspan></text>
+<text x="24" y="88" xml:space="preserve"><tspan fill="#FF6B6B">ALERT</tspan> ORIGIN <tspan fill="#FF6B6B">HIJACK</tspan> <tspan fill="#7CC4FF">198.51.100.0/24</tspan></text>
+<text x="24" y="110" xml:space="preserve">  origin      <tspan fill="#7CC4FF">AS64511</tspan> (expected <tspan fill="#7CC4FF">AS64500</tspan>)</text>
+<text x="24" y="132" xml:space="preserve">  watched     <tspan fill="#7CC4FF">198.51.100.0/24</tspan></text>
+<text x="24" y="154" xml:space="preserve">  seen by     3 peer(s) on 3 collector(s): rrc00, rrc21, rrc25</text>
+<text x="24" y="176" xml:space="preserve">  first seen  2026-11-13T08:00:30Z</text>
+<text x="24" y="198" xml:space="preserve">  path        64496 64498 64511</text>
+<text x="24" y="220" xml:space="preserve"></text>
+<text x="24" y="242" xml:space="preserve"><tspan fill="#FF6B6B">ALERT</tspan> SUB-PREFIX <tspan fill="#FF6B6B">HIJACK</tspan> <tspan fill="#7CC4FF">198.51.100.128/25</tspan></text>
+<text x="24" y="264" xml:space="preserve">  origin      <tspan fill="#7CC4FF">AS64510</tspan> (expected <tspan fill="#7CC4FF">AS64500</tspan>)</text>
+<text x="24" y="286" xml:space="preserve">  watched     <tspan fill="#7CC4FF">198.51.100.0/24</tspan></text>
+<text x="24" y="308" xml:space="preserve">  seen by     1 peer(s) on 1 collector(s): rrc00</text>
+<text x="24" y="330" xml:space="preserve">  first seen  2026-11-13T08:01:00Z</text>
+<text x="24" y="352" xml:space="preserve">  path        64496 64510</text>
+<text x="24" y="374" xml:space="preserve"></text>
+<text x="24" y="396" xml:space="preserve">replay: 13 messages, 10 updates, 1 malformed, 0 oversized, 6 alert(s)</text>
+</g>
+</svg>

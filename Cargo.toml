@@ -1,0 +1,70 @@
+[package]
+name = "vigil"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/LLCForge/Vigil"
+authors = ["LLCForge contributors"]
+description = "Real-time BGP origin hijack detection over public route collector feeds"
+readme = "README.md"
+rust-version = "1.88"
+keywords = ["bgp", "hijack", "ripe-ris", "monitoring", "network"]
+categories = ["network-programming", "command-line-utilities"]
+
+[dependencies]
+anyhow = "1"
+axum = { version = "0.8", default-features = false, features = ["http1", "json", "tokio", "query"] }
+bgpkit-parser = { version = "0.24", default-features = false, features = ["parser"] }
+bytes = "1"
+bzip2 = "0.6"
+flate2 = "1"
+llcforge-alert = { path = "crates/llcforge-alert", version = "0.1" }
+rskafka = { version = "0.6", default-features = false, features = ["compression-gzip", "compression-snappy"] }
+chrono = { version = "0.4", default-features = false, features = ["std", "clock", "serde"] }
+clap = { version = "4", features = ["derive"] }
+fastrand = "2"
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+ipnet = { version = "2", features = ["serde"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync", "signal", "io-util"] }
+tokio-tungstenite = { version = "0.30", default-features = false, features = ["connect", "rustls-tls-webpki-roots"] }
+toml = "0.8"
+tracing = "0.1"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+
+[package.metadata.deb]
+maintainer = "LLCForge contributors <https://github.com/LLCForge>"
+copyright = "2026, LLCForge contributors"
+license-file = ["LICENSE", "0"]
+extended-description = "Real-time BGP origin hijack detection over public route collector feeds"
+section = "net"
+priority = "optional"
+depends = "$auto"
+assets = [
+    ["target/release/vigil", "usr/bin/", "755"],
+    ["vigil.example.toml", "etc/vigil/vigil.toml", "644"],
+    ["README.md", "usr/share/doc/vigil/README.md", "644"],
+    ["NOTICE", "usr/share/doc/vigil/NOTICE", "644"],
+]
+conf-files = ["/etc/vigil/vigil.toml"]
+# Installs packaging/systemd/vigil.service and the matching maintainer scripts;
+# the unit is not enabled automatically (configure first, then enable).
+systemd-units = { unit-name = "vigil", unit-scripts = "packaging/systemd", enable = false, start = false }
+
+[package.metadata.generate-rpm]
+license = "MIT"
+summary = "Real-time BGP origin hijack detection over public route collector feeds"
+assets = [
+    { source = "target/release/vigil", dest = "/usr/bin/vigil", mode = "755" },
+    { source = "packaging/systemd/vigil.service", dest = "/usr/lib/systemd/system/vigil.service", mode = "644" },
+    { source = "vigil.example.toml", dest = "/etc/vigil/vigil.toml", mode = "644", config = "noreplace" },
+    { source = "README.md", dest = "/usr/share/doc/vigil/README.md", mode = "644", doc = true },
+    { source = "LICENSE", dest = "/usr/share/licenses/vigil/LICENSE", mode = "644", doc = true },
+]
+post_install_script = "systemctl daemon-reload >/dev/null 2>&1 || :"
+post_uninstall_script = "systemctl daemon-reload >/dev/null 2>&1 || :"
