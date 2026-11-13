@@ -343,7 +343,7 @@ impl Detector {
         }
         let dedup = self.dedup;
         self.recent.retain(|_, t| now - *t < dedup);
-        out.sort_by(|a, b| (a.first_seen, a.kind).cmp(&(b.first_seen, b.kind)));
+        out.sort_by_key(|a| (a.first_seen, a.kind));
         out
     }
 
