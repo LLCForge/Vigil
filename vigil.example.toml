@@ -111,7 +111,7 @@ min_ratio = 0.5
 # [api]
 # token_env = "VIGIL_API_TOKEN"
 
-# Alert outputs (llcforge-alert). Without any [[alerts.sink]], alerts go to stdout.
+# Alert outputs (llcforge-beacon). Without any [[alerts.sink]], alerts go to stdout.
 [alerts]
 dedup_window_secs = 300
 

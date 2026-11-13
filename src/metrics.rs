@@ -1,6 +1,6 @@
 //! Process-wide counters rendered in the Prometheus text format. Served on the
 //! management listener (`GET /metrics`, see `api`) together with the
-//! llcforge-alert dispatcher metrics.
+//! llcforge-beacon dispatcher metrics.
 
 use std::fmt::Write as _;
 use std::sync::atomic::{AtomicU64, Ordering};

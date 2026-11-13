@@ -1,11 +1,11 @@
 //! Read-only HTTP API on the management listener:
 //!
-//! * `GET /metrics` — Vigil and llcforge-alert metrics (Prometheus text).
+//! * `GET /metrics` — Vigil and llcforge-beacon metrics (Prometheus text).
 //! * `GET /v1/visibility?prefix=<p>` — `{"prefix","peers_seeing","peers_total","ratio","as_of"}`.
 //! * `GET /v1/incidents[?open=true]` — incident timeline.
 //!
 //! `/v1/*` takes an optional bearer token (`[api] token_env`). Health, silences
-//! and reload routes come from llcforge-alert and are merged by `main`.
+//! and reload routes come from llcforge-beacon and are merged by `main`.
 
 use crate::incidents::IncidentStore;
 use crate::metrics;
@@ -17,7 +17,7 @@ use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router};
 use ipnet::IpNet;
-use llcforge_alert::ApiToken;
+use llcforge_beacon::ApiToken;
 use serde::Deserialize;
 use serde_json::json;
 use std::sync::Arc;
@@ -85,7 +85,7 @@ pub fn router(state: ApiState, token: Option<ApiToken>) -> Router {
     if let Some(t) = token {
         v1 = v1.layer(axum::middleware::from_fn_with_state(
             t,
-            llcforge_alert::auth::require_bearer,
+            llcforge_beacon::auth::require_bearer,
         ));
     }
     Router::new()
@@ -103,7 +103,7 @@ mod tests {
     use axum::body::Body;
     use axum::http::Request;
     use chrono::Utc;
-    use llcforge_alert::AlertHandle;
+    use llcforge_beacon::AlertHandle;
     use tower::ServiceExt;
 
     fn state() -> ApiState {

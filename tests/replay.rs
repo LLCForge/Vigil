@@ -81,7 +81,7 @@ fn sample_file_produces_expected_alerts() {
     assert!(routes.iter().all(|r| !r.resolved));
     let kit = Alert::Route(hijack.clone()).to_kit();
     assert_eq!(kit.id, "vigil:origin_hijack:198.51.100.0/24:AS64511");
-    assert_eq!(kit.severity, llcforge_alert::Severity::Critical);
+    assert_eq!(kit.severity, llcforge_beacon::Severity::Critical);
 }
 
 #[test]

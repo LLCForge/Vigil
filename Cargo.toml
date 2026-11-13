@@ -18,7 +18,7 @@ bgpkit-parser = { version = "0.24", default-features = false, features = ["parse
 bytes = "1"
 bzip2 = "0.6"
 flate2 = "1"
-llcforge-alert = { path = "crates/llcforge-alert", version = "0.1" }
+llcforge-beacon = { path = "crates/llcforge-beacon", version = "0.1" }
 rskafka = { version = "0.6", default-features = false, features = ["compression-gzip", "compression-snappy"] }
 chrono = { version = "0.4", default-features = false, features = ["std", "clock", "serde"] }
 clap = { version = "4", features = ["derive"] }

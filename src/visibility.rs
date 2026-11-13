@@ -9,7 +9,7 @@ use crate::ripestat::Visibility;
 use crate::ris::RisUpdate;
 use chrono::{DateTime, SecondsFormat, Utc};
 use ipnet::IpNet;
-use llcforge_alert::{Alert, Severity};
+use llcforge_beacon::{Alert, Severity};
 use serde::Serialize;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Write as _;

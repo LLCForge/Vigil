@@ -5,8 +5,8 @@ use crate::matcher::{Exception, Matcher, ScrubbingMode, Watched, BUILTIN_SCRUBBI
 use anyhow::{bail, ensure, Context, Result};
 use chrono::{DateTime, Utc};
 use ipnet::IpNet;
-use llcforge_alert::config::SinkKind;
-use llcforge_alert::{AlertsConfig, HealthConfig, LogFormat, SilencesConfig, SinkConfig};
+use llcforge_beacon::config::SinkKind;
+use llcforge_beacon::{AlertsConfig, HealthConfig, LogFormat, SilencesConfig, SinkConfig};
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::net::SocketAddr;
@@ -605,7 +605,7 @@ impl Config {
     pub fn data_dir(&self) -> PathBuf {
         self.data_dir
             .clone()
-            .unwrap_or_else(|| llcforge_alert::default_data_dir(crate::alert::TOOL))
+            .unwrap_or_else(|| llcforge_beacon::default_data_dir(crate::alert::TOOL))
     }
 
     /// Statically configured watched prefixes.
@@ -715,7 +715,7 @@ impl Config {
             vars.push(t);
         }
         for v in vars {
-            llcforge_alert::env_secret(v)?;
+            llcforge_beacon::env_secret(v)?;
         }
         Ok(())
     }

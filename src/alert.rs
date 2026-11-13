@@ -3,7 +3,7 @@
 
 use chrono::{DateTime, SecondsFormat, Utc};
 use ipnet::IpNet;
-use llcforge_alert::Severity;
+use llcforge_beacon::Severity;
 use serde::Serialize;
 
 /// Tool name used in every alert id and in the Prometheus `tool` label.
@@ -167,8 +167,8 @@ impl Alert {
     }
 
     /// Conversion to the shared `llcforge.alert.v1` schema.
-    pub fn to_kit(&self) -> llcforge_alert::Alert {
-        use llcforge_alert::Alert as K;
+    pub fn to_kit(&self) -> llcforge_beacon::Alert {
+        use llcforge_beacon::Alert as K;
         match self {
             Alert::Route(r) => {
                 let title = if r.resolved {

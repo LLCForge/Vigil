@@ -19,7 +19,7 @@ use bgpkit_parser::parser::bmp::messages::BmpMessageBody;
 use bgpkit_parser::{parse_bmp_msg, parse_openbmp_header, Elementor};
 use bytes::Bytes;
 use ipnet::IpNet;
-use llcforge_alert::glob_match;
+use llcforge_beacon::glob_match;
 use rskafka::client::partition::{OffsetAt, UnknownTopicHandling};
 use rskafka::client::{Client, ClientBuilder};
 use std::collections::HashMap;

@@ -1,5 +1,5 @@
 //! `vigil run` / `vigil service run`: wires feeds, the detector, pollers, the
-//! management listener and the llcforge-alert dispatcher, and handles reloads.
+//! management listener and the llcforge-beacon dispatcher, and handles reloads.
 
 use crate::alert::{Alert, TOOL};
 use crate::api::{self, ApiState};
@@ -18,7 +18,7 @@ use crate::{kafka, metrics, mrt};
 use anyhow::{Context, Result};
 use chrono::{Duration as ChronoDuration, Utc};
 use ipnet::IpNet;
-use llcforge_alert::{
+use llcforge_beacon::{
     health_router, reload_router, silences_router, ApiToken, Dispatcher, DispatcherOptions,
     Readiness, ReloadSignal, ServiceSpec, Shutdown, SilenceStore,
 };

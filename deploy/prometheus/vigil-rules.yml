@@ -1,4 +1,4 @@
-# Prometheus alerting rules for Vigil (generic llcforge-alert metrics).
+# Prometheus alerting rules for Vigil (generic llcforge-beacon metrics).
 # Load with `rule_files: ["vigil-rules.yml"]` or as a PrometheusRule `spec`.
 # Assumes the scrape job is named "vigil"; adjust the `job` matcher if not.
 groups:
@@ -24,7 +24,7 @@ groups:
   - name: vigil.alert-delivery
     rules:
       - alert: VigilAlertDeliveryFailing
-        expr: increase(llcforge_alert_sink_failed_total{tool="vigil"}[15m]) > 0
+        expr: increase(llcforge_beacon_sink_failed_total{tool="vigil"}[15m]) > 0
         for: 5m
         labels:
           severity: warning
@@ -33,7 +33,7 @@ groups:
           description: "{{ $value | humanize }} delivery failures in 15 minutes. Undelivered alerts stay queued and are retried."
 
       - alert: VigilAlertsDropped
-        expr: increase(llcforge_alert_dropped_total{tool="vigil"}[15m]) > 0
+        expr: increase(llcforge_beacon_dropped_total{tool="vigil"}[15m]) > 0
         labels:
           severity: critical
         annotations:
@@ -41,7 +41,7 @@ groups:
           description: "Alerts were dropped (intake channel full, queue bound reached or delivery expired)."
 
       - alert: VigilAlertQueueBacklog
-        expr: llcforge_alert_queue_depth{tool="vigil"} > 100
+        expr: llcforge_beacon_queue_depth{tool="vigil"} > 100
         for: 15m
         labels:
           severity: warning
@@ -50,7 +50,7 @@ groups:
           description: "Alerts are accumulating faster than sinks accept them, or a sink has been down for 15 minutes."
 
       - alert: VigilSinkBacklog
-        expr: llcforge_alert_sink_queued{tool="vigil"} > 50
+        expr: llcforge_beacon_sink_queued{tool="vigil"} > 50
         for: 30m
         labels:
           severity: warning

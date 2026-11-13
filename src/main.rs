@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
 use clap::{Parser, Subcommand};
 use ipnet::IpNet;
-use llcforge_alert::cli::{run_silence_command, ServiceCommand, SilenceCommand};
-use llcforge_alert::{init_logging, run_service_command, LogFormat};
+use llcforge_beacon::cli::{run_silence_command, ServiceCommand, SilenceCommand};
+use llcforge_beacon::{init_logging, run_service_command, LogFormat};
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use vigil::config::Config;
@@ -91,7 +91,7 @@ fn main() -> std::process::ExitCode {
         return std::process::ExitCode::FAILURE;
     }
     let result = match cli.command {
-        Command::Run => llcforge_alert::service::run_foreground(cli.config, daemon::daemon),
+        Command::Run => llcforge_beacon::service::run_foreground(cli.config, daemon::daemon),
         Command::CheckConfig => check_config(&cli.config),
         Command::Replay { file } => run_replay(&cli.config, &file),
         Command::ReplayMrt {

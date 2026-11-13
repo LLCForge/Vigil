@@ -32,7 +32,7 @@ flowchart LR
   CORE -- subscriptions --> F1
   D & V & B --> O[outlet.rs<br/>enrich + incidents]
   O -.-> NO[Notary API] & AI
-  O --> K[llcforge-alert dispatcher<br/>queue, silences, sinks]
+  O --> K[llcforge-beacon dispatcher<br/>queue, silences, sinks]
   API[api.rs: /metrics /v1/visibility /v1/incidents<br/>+ /healthz /readyz /v1/silences /v1/reload] --- V & O
 ```
 
@@ -83,7 +83,7 @@ A fired alert stays open while any tracked peer still carries the offending rout
 - **Kafka (RouteViews) -> Vigil.** Untrusted, unauthenticated plaintext. Records over 4 MiB are ignored; the OpenBMP/BMP/BGP decoder runs under `catch_unwind`; malformed records are counted. Topic count is capped (`max_topics`).
 - **BGPKIT broker and MRT archives -> Vigil.** Untrusted. Broker responses capped at 4 MiB; file URLs must be http(s) on an allow-listed host (default `routeviews.org`, `ripe.net`; no redirects followed); downloads capped (`max_file_bytes`) and streamed to a temporary file that is always removed; parsing runs in a blocking task whose panics are contained.
 - **RIPEstat, Notary, Event Horizon -> Vigil.** Untrusted. Bodies capped, every call time-boxed, strings (AS names, countries, RPKI states) allowlisted or reduced to printable ASCII before they reach alerts.
-- **Vigil -> sinks.** Escaping and signing are done by llcforge-alert (Telegram HTML escaping, HMAC webhook signatures, no redirects).
+- **Vigil -> sinks.** Escaping and signing are done by llcforge-beacon (Telegram HTML escaping, HMAC webhook signatures, no redirects).
 - **Management listener.** `/metrics`, `/healthz`, `/readyz` are unauthenticated read-only; `/v1/visibility` and `/v1/incidents` take an optional bearer token (`[api] token_env`); `/v1/silences` and `POST /v1/reload` are only mounted with their own token. Request bodies are capped at 1 KiB on Vigil's routes. Bind to localhost or a management network.
 
 ## Failure modes
@@ -95,7 +95,7 @@ A fired alert stays open while any tracked peer still carries the offending rout
 | MRT download or parse failure | File skipped, `vigil_mrt_failures_total` incremented; the next poll continues. |
 | Malformed or oversized message / record | Dropped and counted; the session continues. |
 | RIPEstat / Notary / Event Horizon slow or down | The alert goes out without enrichment after the timeout; ASN lists keep their last good value; visibility keeps its last measurement. |
-| Sink failure | Handled by llcforge-alert: retries, persistent queue, redelivery; other sinks unaffected. |
+| Sink failure | Handled by llcforge-beacon: retries, persistent queue, redelivery; other sinks unaffected. |
 | Flood of distinct hijacked more-specifics | State tables capped (65,536 tracked prefixes, 10,000 pending and 10,000 open alerts, 1,000 incidents); overflow is counted in `vigil_sightings_dropped_total`. |
 | Invalid config on reload | Rejected and logged; the running configuration stays. Feed, listener and `data_dir` changes need a restart. |
 
@@ -103,7 +103,7 @@ A fired alert stays open while any tracked peer still carries the offending rout
 
 - Tokio multi-threaded runtime. Feed tasks (RIS Live, one per Kafka partition, BGPKIT poller) send `FeedEvent`s through one bounded channel (4,096) to the core loop, which owns the detector and flushes once per second.
 - Watch lists flow back through `watch` channels: the core publishes the subscription list (watched prefixes plus uncovered blackhole routes); the ASN watcher and the Event Horizon poller publish their sets to the core.
-- Alerts are handed to the llcforge-alert dispatcher through a non-blocking handle; enrichment runs in at most 32 concurrent tasks.
+- Alerts are handed to the llcforge-beacon dispatcher through a non-blocking handle; enrichment runs in at most 32 concurrent tasks.
 - Graceful shutdown on Ctrl+C, `SIGTERM` or the Windows service stop: feeds stop, the detector flushes, enrichment drains, then the dispatcher drains (bounded).
 
 ## Repository layout
@@ -111,7 +111,7 @@ A fired alert stays open while any tracked peer still carries the offending rout
 ```
 Vigil/
 ├── .github/                  CI (Linux, macOS, Windows), release, dependabot
-├── crates/llcforge-alert/    vendored shared alert kit (sync.py)
+├── crates/llcforge-beacon/    vendored shared alert kit (sync.py)
 ├── deploy/                   Grafana dashboard, Prometheus rules, Helm chart
 ├── packaging/                deb/rpm fragment, systemd, launchd, Homebrew, Scoop, winget, Windows service
 ├── examples/                 RIS Live samples for `vigil replay`

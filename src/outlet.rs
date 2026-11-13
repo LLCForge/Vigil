@@ -1,5 +1,5 @@
 //! Where alerts leave Vigil: optional enrichment (RPKI via Notary, AS names),
-//! the incident timeline, then the llcforge-alert dispatcher. Enrichment runs in
+//! the incident timeline, then the llcforge-beacon dispatcher. Enrichment runs in
 //! its own task with a hard timeout per lookup, so it never stalls detection.
 
 use crate::alert::{Alert, RouteAlert};
@@ -7,7 +7,7 @@ use crate::asinfo::AsInfo;
 use crate::incidents::IncidentStore;
 use crate::metrics;
 use crate::notary::Notary;
-use llcforge_alert::AlertHandle;
+use llcforge_beacon::AlertHandle;
 use std::sync::Arc;
 use tokio::sync::{watch, Semaphore};
 
@@ -44,7 +44,7 @@ impl Outlet {
     }
 
     /// Record and dispatch a finished alert (never blocks).
-    pub fn send_kit(&self, a: llcforge_alert::Alert) {
+    pub fn send_kit(&self, a: llcforge_beacon::Alert) {
         metrics::ALERTS.inc();
         self.incidents.record(&a);
         self.outputs().handle.send(a);

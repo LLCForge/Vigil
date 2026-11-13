@@ -52,7 +52,7 @@ Başka bir AS prefix'ini ya da onun daha spesifik bir parçasını origin etmeye
 - **Event Horizon blackhole'ları:** Event Horizon'ın `GET /v1/blackholes` uç noktasını yoklar, /32 ve /128 rotalarına abone olur ve bir blackhole bekleme süresinden sonra hiçbir RIS peer'ında görünmüyorsa alarm verir. Kendi RTBH more-specific'lerin sub-prefix hijack olarak bildirilmez.
 - **Görünürlük:** her izlenen prefix'i taşıyan RIS full-feed peer oranı (RIPEstat routing-status, peer bazlı withdrawal'larla canlı düzeltilir); `min_ratio` altına inince `visibility_loss` alarmı, Prometheus metriği ve `GET /v1/visibility`.
 
-**Alarm ve işletim** (ortak [llcforge-alert](crates/llcforge-alert) kiti)
+**Alarm ve işletim** (ortak [llcforge-beacon](crates/llcforge-beacon) kiti)
 
 - Birleştirme (peer, collector, ilk görülme) ve tekilleştirme; rota `resolve_after_secs` boyunca kaybolduktan sonra aynı alarm id'si ile **çözüldü** bildirimi.
 - **Olay zaman çizelgesi** (`vigil incidents`, `GET /v1/incidents`), diske kaydedilir.

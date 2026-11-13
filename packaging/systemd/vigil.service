@@ -10,7 +10,7 @@ After=network-online.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/vigil run --config /etc/vigil/vigil.toml
-# SIGHUP triggers the llcforge-alert ReloadSignal (config reload).
+# SIGHUP triggers the llcforge-beacon ReloadSignal (config reload).
 ExecReload=/bin/kill -HUP $MAINPID
 EnvironmentFile=-/etc/vigil/vigil.env
 Restart=on-failure

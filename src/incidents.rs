@@ -4,7 +4,7 @@
 
 use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
-use llcforge_alert::{Alert, Severity};
+use llcforge_beacon::{Alert, Severity};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;

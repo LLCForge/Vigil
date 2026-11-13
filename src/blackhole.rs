@@ -12,7 +12,7 @@ use crate::ris::RisUpdate;
 use anyhow::{anyhow, Result};
 use chrono::{DateTime, Duration, Utc};
 use ipnet::IpNet;
-use llcforge_alert::{Alert, Severity};
+use llcforge_beacon::{Alert, Severity};
 use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 use std::net::IpAddr;
@@ -171,7 +171,7 @@ pub async fn run(
     let token = cfg
         .token_env
         .as_deref()
-        .and_then(|v| llcforge_alert::env_secret(v).ok());
+        .and_then(|v| llcforge_beacon::env_secret(v).ok());
     let url = format!("{}/v1/blackholes", cfg.url.trim_end_matches('/'));
     let timeout = std::time::Duration::from_millis(cfg.timeout_ms);
     let mut tick = tokio::time::interval(std::time::Duration::from_secs(cfg.poll_secs));

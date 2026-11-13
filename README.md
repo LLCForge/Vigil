@@ -52,7 +52,7 @@ If another AS starts originating your prefix, or a more-specific of it, traffic 
 - **Event Horizon blackholes:** polls Event Horizon's `GET /v1/blackholes`, subscribes the /32 and /128 routes, and alerts when a blackhole is not visible at any RIS peer after a grace period. Your own RTBH more-specifics are not reported as sub-prefix hijacks.
 - **Visibility:** share of RIS full-feed peers that carry each watched prefix (RIPEstat routing-status, adjusted live by peer withdrawals); `visibility_loss` alert below `min_ratio`, Prometheus gauge and `GET /v1/visibility`.
 
-**Alerts and operations** (shared [llcforge-alert](crates/llcforge-alert) kit)
+**Alerts and operations** (shared [llcforge-beacon](crates/llcforge-beacon) kit)
 
 - Aggregation (peers, collectors, first seen) and dedup; **resolution** with the same alert id once the route has been gone for `resolve_after_secs`.
 - **Incident timeline** (`vigil incidents`, `GET /v1/incidents`), persisted.
